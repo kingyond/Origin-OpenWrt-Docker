@@ -44,11 +44,11 @@ jobs:
 
     - name: Login To Alibaba Cloud Container Registry
       run: |
-        docker login -u ${{ secrets.ALIYUN_USERNAME }} -p ${{ secrets.ALIYUN_PWD }} registry.cn-shanghai.aliyuncs.com
+        docker login -u ${{ secrets.ALIYUN_USERNAME }} -p ${{ secrets.ALIYUN_PWD }} registry.cn-shenzhen.aliyuncs.com
 
     - name: Download Image Builder
       run: |
-        wget -q $PREFIX_URL/$TARGET/$SUBTARGET/openwrt-imagebuilder-$TARGET-$SUBTARGET.Linux-x86_64.tar.xz
+        wget -q $PREFIX_URL/$TARGET/$SUBTARGET/immortalwrt-imagebuilder-$TARGET-$SUBTARGET.Linux-x86_64.tar.xz
         wget -q https://raw.githubusercontent.com/coolsnowwolf/lede/master/package/lean/autocore/files/arm/index.htm -O ./files/etc/index.htm
 
     - name: Load Custom Configuration 
@@ -61,7 +61,7 @@ jobs:
         ./scripts/preset-terminal-tools.sh
         tar -xJf *.tar.xz
         rm *.tar.xz
-        cd openwrt-imagebuilder-$TARGET-$SUBTARGET.Linux-x86_64
+        cd immortalwrt-imagebuilder-$TARGET-$SUBTARGET.Linux-x86_64
         sed -i 's/kmod-/-kmod-/g' include/target.mk
         sed -i 's/luci-app-unblockmusic//g' include/target.mk
         sed -i 's/luci-app-nlbwmon//g' include/target.mk
@@ -77,11 +77,11 @@ jobs:
       run: |
         sed -i 's/autocore/autocore-x86/g' config/packages.config
         export packages=$(cat ./config/packages.config)
-        cd openwrt-imagebuilder-$TARGET-$SUBTARGET.Linux-x86_64
+        cd immortalwrt-imagebuilder-$TARGET-$SUBTARGET.Linux-x86_64
         make image PACKAGES="$packages" FILES=files/
         cp bin/targets/$TARGET/$SUBTARGET/*rootfs.tar.gz ..
         cd ..
-        rm -rf openwrt-imagebuilder-$TARGET-$SUBTARGET.Linux-x86_64
+        rm -rf immortalwrt-imagebuilder-$TARGET-$SUBTARGET.Linux-x86_64
 
     - name: Build & Push Multiarch Image
       uses: docker/build-push-action@v2
@@ -93,5 +93,5 @@ jobs:
         tags: |
           ${{ secrets.DOCKERHUB_USERNAME }}/openwrt:${{ env.IMAGE_TAG }}
           ${{ secrets.DOCKERHUB_USERNAME }}/openwrt:x86_64
-          registry.cn-shanghai.aliyuncs.com/${{ secrets.ALIYUN_NAMESPACES }}/openwrt:${{ env.IMAGE_TAG }}
-          registry.cn-shanghai.aliyuncs.com/${{ secrets.ALIYUN_NAMESPACES }}/openwrt:x86_64
+          registry.cn-shenzhen.aliyuncs.com/${{ secrets.ALIYUN_NAMESPACES }}/openwrt:${{ env.IMAGE_TAG }}
+          registry.cn-shenzhen.aliyuncs.com/${{ secrets.ALIYUN_NAMESPACES }}/openwrt:x86_64
