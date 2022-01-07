@@ -1,4 +1,4 @@
-name: Raspberry Pi 1B Docker Image
+name: Raspberry Marvell a385 Docker Image
 
 on:
   repository_dispatch:
