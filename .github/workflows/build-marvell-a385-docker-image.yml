@@ -7,7 +7,7 @@ on:
     - cron: 0 0 * * *
 
 env:
-  PREFIX_URL: https://openwrt.cc/releases/targets
+  PREFIX_URL: https://github.com/kingyond/OpenWrt-Rpi/releases/download
   TARGET: mvebu
   SUBTARGET: cortexa9
   PLATFORM: arm_cortex-a9_vfpv3
@@ -48,7 +48,7 @@ jobs:
 
     - name: Download Image Builder
       run: |
-        wget -q $PREFIX_URL/$TARGET/$SUBTARGET/openwrt-imagebuilder-$TARGET-$SUBTARGET.Linux-x86_64.tar.xz
+        wget -q $PREFIX_URL/$TARGET-$SUBTARGET/openwrt-imagebuilder-$TARGET-$SUBTARGET.Linux-x86_64.tar.xz
         wget -q https://raw.githubusercontent.com/coolsnowwolf/lede/master/package/lean/autocore/files/arm/index.htm -O ./files/etc/index.htm
 
     - name: Load Custom Configuration 
