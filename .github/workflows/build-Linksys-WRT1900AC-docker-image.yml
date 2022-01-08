@@ -72,7 +72,6 @@ jobs:
         echo CONFIG_TARGET_ROOTFS_TARGZ=y >> .config
         echo CONFIG_TARGET_ROOTFS_EXT4FS=y >> .config
         sed -i 's/ROOTFS_PARTSIZE=104/ROOTFS_PARTSIZE=750/g' .config
-        [ -e $DEVICE ] && echo "CONFIG_TARGET_$TARGET_$SUBTARGET_DEVICE_$DEVICE" >> .config
 
     - name: Build RootFS
       run: |
@@ -80,7 +79,7 @@ jobs:
         sed -i 's/luci-i18n-adbyby-plus-zh-cn //g' config/packages.config
         export packages=$(cat config/packages.config)
         cd openwrt-imagebuilder-$TARGET-$SUBTARGET.Linux-x86_64
-        make image
+        make image PROFILE="$DEVICE"
         ls bin/targets/$TARGET/$SUBTARGET/
         cp bin/targets/$TARGET/$SUBTARGET/*rootfs.tar.gz ..
         cd ..
