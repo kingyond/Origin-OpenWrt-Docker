@@ -1,4 +1,4 @@
-name: Marvell a385 Docker Image
+name: Marvell cortexa9 Origin Openwrt Docker Image
 
 on:
   repository_dispatch:
