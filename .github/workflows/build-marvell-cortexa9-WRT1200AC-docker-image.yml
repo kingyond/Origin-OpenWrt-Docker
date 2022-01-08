@@ -1,4 +1,4 @@
-name: Marvell cortexa9 Origin Openwrt Docker Image
+name: Linksys WRT1200AC Origin Openwrt Docker Image
 
 on:
   repository_dispatch:

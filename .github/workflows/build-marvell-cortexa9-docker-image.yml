@@ -10,7 +10,7 @@ env:
   PREFIX_URL: https://downloads.openwrt.org/snapshots/targets
   TARGET: mvebu
   SUBTARGET: cortexa9
-  PLATFORM: arm_cortex-a9_vfpv3
+  PLATFORM: arm_cortex-a9_vfpv3-d16
   DEVICE:
   ARCH: linux/arm/v7
   CLASH_ARCH: armv7
