@@ -1,4 +1,4 @@
-name: Linksys WRT1200AC Origin Openwrt Docker Image
+name: Turris Omnia Origin Openwrt Docker Image
 
 on:
   repository_dispatch:
@@ -11,11 +11,11 @@ env:
   TARGET: mvebu
   SUBTARGET: cortexa9
   PLATFORM: arm_cortex-a9_vfpv3-d16
-  DEVICE: linksys_wrt1200ac
+  DEVICE: cznic_turris-omnia
   CPU: Marvell Armada 385 88F6820
   ARCH: linux/arm/v7
   CLASH_ARCH: armv7
-  IMAGE_TAG: linksys_wrt1200ac
+  IMAGE_TAG: cznic_turris-omnia
 
 jobs:
   Publish:
