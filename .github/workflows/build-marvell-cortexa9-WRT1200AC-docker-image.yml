@@ -10,11 +10,11 @@ env:
   PREFIX_URL: https://downloads.openwrt.org/snapshots/targets
   TARGET: mvebu
   SUBTARGET: cortexa9
-  PLATFORM: arm_cortex-a9_vfpv3
-  DEVICE:
+  PLATFORM: arm_cortex-a9_vfpv3-d16
+  DEVICE: linksys_wrt1200ac
   ARCH: linux/arm/v7
   CLASH_ARCH: armv7
-  IMAGE_TAG: armv7
+  IMAGE_TAG: linksys_wrt1200ac
 
 jobs:
   Publish:
