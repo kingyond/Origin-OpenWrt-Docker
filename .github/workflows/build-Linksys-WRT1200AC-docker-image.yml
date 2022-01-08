@@ -80,6 +80,7 @@ jobs:
         export packages=$(cat config/packages.config)
         cd openwrt-imagebuilder-$TARGET-$SUBTARGET.Linux-x86_64
         make image
+        ls bin/targets/$TARGET/$SUBTARGET/
         cp bin/targets/$TARGET/$SUBTARGET/*rootfs.tar.gz ..
         cd ..
         rm -rf openwrt-imagebuilder-$TARGET-$SUBTARGET.Linux-x86_64
