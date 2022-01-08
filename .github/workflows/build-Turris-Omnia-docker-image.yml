@@ -1,0 +1,98 @@
+name: Turris Omnia Origin Openwrt Docker Image
+
+on:
+  repository_dispatch:
+  workflow_dispatch:
+  schedule:
+    - cron: 0 0 * * *
+
+env:
+  PREFIX_URL: https://downloads.openwrt.org/snapshots/targets
+  TARGET: mvebu
+  SUBTARGET: cortexa9
+  PLATFORM: arm_cortex-a9_vfpv3-d16
+  DEVICE: cznic_turris-omnia
+  CPU: Marvell Armada 385 88F6820
+  ARCH: linux/arm/v7
+  CLASH_ARCH: armv7
+  IMAGE_TAG: cznic_turris-omnia
+
+jobs:
+  Publish:
+    runs-on: ubuntu-18.04
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Initialization Environment
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo -E apt-get -qq update
+        sudo -E apt-get -qq install $(curl -fsSL git.io/depends-ubuntu-1804)
+
+    - name: Set Up QEMU
+      uses: docker/setup-qemu-action@v1
+
+    - name: Set Up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Login To DockerHub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PWD }}
+
+    - name: Login To Alibaba Cloud Container Registry
+      run: |
+        echo ${{ secrets.ALIYUN_PWD }} | docker login -u ${{ secrets.ALIYUN_USERNAME }} --password-stdin registry.cn-shenzhen.aliyuncs.com
+
+    - name: Download Image Builder
+      run: |
+        wget -q $PREFIX_URL/$TARGET/$SUBTARGET/openwrt-imagebuilder-$TARGET-$SUBTARGET.Linux-x86_64.tar.xz
+
+    - name: Load Custom Configuration 
+      run: |
+        sed -i "s/subtarget/$SUBTARGET/g" files/etc/opkg/distfeeds.conf
+        sed -i "s/target\//$TARGET\//g" files/etc/opkg/distfeeds.conf
+        sed -i "s/platform/$PLATFORM/g" files/etc/opkg/distfeeds.conf
+        chmod +x scripts/*
+        chmod +x files/etc/rc.local
+        ./scripts/preset-clash-core.sh
+        ./scripts/preset-terminal-tools.sh
+        tar -xJf *.tar.xz
+        rm *.tar.xz
+        cd openwrt-imagebuilder-$TARGET-$SUBTARGET.Linux-x86_64
+        sed -i 's/kmod-/-kmod-/g' include/target.mk
+        sed -i 's/luci-app-unblockmusic//g' include/target.mk
+        sed -i 's/luci-app-nlbwmon//g' include/target.mk
+        sed -i 's/luci-app-sfe//g' include/target.mk
+        sed -i 's/kmod-/-kmod-/g' target/linux/$TARGET/Makefile
+        echo CONFIG_TARGET_ROOTFS_TARGZ=y >> .config
+        echo CONFIG_TARGET_ROOTFS_EXT4FS=y >> .config
+        sed -i 's/ROOTFS_PARTSIZE=104/ROOTFS_PARTSIZE=750/g' .config
+        [ -e $DEVICE ] && echo "CONFIG_TARGET_$TARGET_$SUBTARGET_DEVICE_$DEVICE" >> .config
+
+    - name: Build RootFS
+      run: |
+        sed -i 's/autocore/autocore-arm/g' config/packages.config
+        sed -i 's/luci-i18n-adbyby-plus-zh-cn //g' config/packages.config
+        export packages=$(cat config/packages.config)
+        cd openwrt-imagebuilder-$TARGET-$SUBTARGET.Linux-x86_64
+        make image
+        ls bin/targets/$TARGET/$SUBTARGET/
+        cp bin/targets/$TARGET/$SUBTARGET/*rootfs.tar.gz ..
+        cd ..
+        rm -rf openwrt-imagebuilder-$TARGET-$SUBTARGET.Linux-x86_64
+
+    - name: Build & Push Multiarch Image
+      uses: docker/build-push-action@v2
+      with:
+        platforms: ${{ env.ARCH }}
+        file: Dockerfile
+        context: .
+        push: true
+        tags: |
+          ${{ secrets.DOCKERHUB_USERNAME }}/openwrt:${{ env.IMAGE_TAG }}
+          registry.cn-shenzhen.aliyuncs.com/${{ secrets.ALIYUN_NAMESPACES }}/openwrt:${{ env.IMAGE_TAG }}
