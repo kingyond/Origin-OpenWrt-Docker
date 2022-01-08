@@ -78,6 +78,9 @@ jobs:
         sed -i 's/autocore/autocore-x86/g' config/packages.config
         export packages=$(cat ./config/packages.config)
         cd immortalwrt-imagebuilder-$TARGET-$SUBTARGET.Linux-x86_64
+        echo CONFIG_TARGET_ROOTFS_TARGZ=y >> .config
+        echo CONFIG_TARGET_ROOTFS_EXT4FS=y >> .config
+        sed -i 's/ROOTFS_PARTSIZE=104/ROOTFS_PARTSIZE=750/g' .config
         make image PACKAGES="$packages" FILES=files/
         cp bin/targets/$TARGET/$SUBTARGET/*rootfs.tar.gz ..
         cd ..
