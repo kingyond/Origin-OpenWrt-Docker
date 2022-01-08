@@ -48,7 +48,7 @@ jobs:
 
     - name: Download Image Builder
       run: |
-        wget -q $PREFIX_URL/$TARGET-$SUBTARGET/openwrt-imagebuilder-$TARGET-$SUBTARGET.Linux-x86_64.tar.xz
+        wget -q $PREFIX_URL/$TARGET/$SUBTARGET/openwrt-imagebuilder-$TARGET-$SUBTARGET.Linux-x86_64.tar.xz
 
     - name: Load Custom Configuration 
       run: |
