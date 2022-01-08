@@ -10,7 +10,7 @@ env:
   PREFIX_URL: https://github.com/kingyond/OpenWrt-Rpi/releases/download
   TARGET: mvebu
   SUBTARGET: cortexa9
-  PLATFORM: arm_cortex-a9_vfpv3-d16
+  PLATFORM: arm_cortex-a9_vfpv3
   ARCH: linux/arm/v6
   CLASH_ARCH: armv6
   IMAGE_TAG: marvel-a385
