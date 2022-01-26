@@ -3,8 +3,8 @@ name: Marvell Armada A385 DB AP Origin Openwrt Docker Image
 on:
   repository_dispatch:
   workflow_dispatch:
-  schedule:
-    - cron: 0 0 * * *
+#  schedule:
+#    - cron: 0 0 * * *
 
 env:
   PREFIX_URL: https://downloads.openwrt.org/snapshots/targets
